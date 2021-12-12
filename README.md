@@ -2,22 +2,22 @@
 
 ---
 
-# picoargs
+# tinyargs
 
-[![npm version](https://badgen.net/npm/v/picoargs)](https://npm.im/picoargs) [![npm downloads](https://badgen.net/npm/dm/picoargs)](https://npm.im/picoargs)
+[![npm version](https://badgen.net/npm/v/tinyargs)](https://npm.im/tinyargs) [![npm downloads](https://badgen.net/npm/dm/tinyargs)](https://npm.im/tinyargs)
 
 A tiny and flexible command-line argument parser for Node.js and Deno.
 
 ## Install
 
 ```bash
-npm i picoargs
+npm i tinyargs
 ```
 
 [Deno](https://deno.land) users:
 
 ```ts
-import { parse } from "https://unpkg.com/picoargs/mod.ts"
+import { parse } from "https://unpkg.com/tinyargs/mod.ts"
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ import { parse } from "https://unpkg.com/picoargs/mod.ts"
 ### CLI example
 
 ```ts
-import { parse } from "picoargs"
+import { parse } from "tinyargs"
 
 const cli = parse(process.argv.slice(2), [
   { name: "help", flags: ["h"], type: Boolean, stop: true },
@@ -107,7 +107,7 @@ if (cli.command === "run") {
 
 ## API Reference
 
-https://www.jsdocs.io/package/picoargs
+https://www.jsdocs.io/package/tinyargs
 
 ## Sponsors
 
