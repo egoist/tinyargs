@@ -14,6 +14,12 @@ A tiny and flexible command-line argument parser for Node.js and Deno.
 npm i picoargs
 ```
 
+[Deno](https://deno.land) users:
+
+```ts
+import { parse } from "https://unpkg.com/picoargs/mod.ts"
+```
+
 ## Usage
 
 ### CLI example

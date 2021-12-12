@@ -1,7 +1,7 @@
 {
   "name": "picoargs",
-  "version": "0.0.0",
-  "description": "My awesome typescript library",
+  "version": "0.1.0",
+  "description": "A tiny and flexible command-line argument parser for Node.js and Deno.",
   "publishConfig": {
     "access": "public"
   },
