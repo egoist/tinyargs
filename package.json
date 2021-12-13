@@ -18,13 +18,15 @@
   "scripts": {
     "build-fast": "tsup src/index.ts --format cjs,esm --target node14",
     "build": "pnpm run build-fast -- --dts-resolve",
-    "test": "pnpm run build && uvu -r sucrase/register --ignore fixture",
+    "test": "pnpm run build && ava",
     "test-cov": "c8 -r lcov npm run test",
-    "prepublishOnly": "pnpm run build-fast"
+    "prepublishOnly": "pnpm run build-fast",
+    "ts": "node -r sucrase/register"
   },
   "license": "MIT",
   "devDependencies": {
     "@egoist/prettier-config": "1.0.0",
+    "ava": "^4.0.0-rc.1",
     "c8": "^7.10.0",
     "prettier": "2.5.1",
     "sucrase": "3.20.3",
@@ -34,5 +36,13 @@
   },
   "engines": {
     "node": ">=14"
+  },
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "sucrase/register"
+    ]
   }
 }

@@ -1,13 +1,15 @@
-import { test } from "uvu"
-import assert from "uvu/assert"
+import test from "ava"
 import { parse } from "../src"
 
-test("args", () => {
-  assert.throws(() => {
-    parse(["--foo", "--bar", "123"], [])
-  }, /unknown flag/)
+test("args", (t) => {
+  t.throws(
+    () => {
+      parse(["--foo", "--bar", "123"], [])
+    },
+    { message: /unknown flag/ },
+  )
 
-  assert.equal(
+  t.deepEqual(
     parse(
       ["--foo", "--bar", "123"],
       [
@@ -18,11 +20,14 @@ test("args", () => {
     { foo: true, bar: 123, _: [] },
   )
 
-  assert.throws(() => {
-    parse(["--foo", "123"], [{ name: "foo", type: Boolean }])
-  }, /unknown positional argument: 123/)
+  t.throws(
+    () => {
+      parse(["--foo", "123"], [{ name: "foo", type: Boolean }])
+    },
+    { message: /unknown positional argument: 123/ },
+  )
 
-  assert.equal(
+  t.deepEqual(
     parse(
       ["--own-arg", "1", "run", "build", "--bar", "123"],
       [
@@ -35,8 +40,8 @@ test("args", () => {
   )
 })
 
-test("multiple: multiple boolean flags", () => {
-  assert.equal(
+test("multiple: multiple boolean flags", (t) => {
+  t.deepEqual(
     parse(
       ["--foo", "--foo", "--foo"],
       [{ name: "foo", type: Boolean, multiple: true }],
@@ -45,8 +50,8 @@ test("multiple: multiple boolean flags", () => {
   )
 })
 
-test("multiple: multiple string flags", () => {
-  assert.equal(
+test("multiple: multiple string flags", (t) => {
+  t.deepEqual(
     parse(
       ["--foo", "1", "--foo", "2", "--foo", "3"],
       [{ name: "foo", type: String, multiple: true }],
@@ -55,8 +60,8 @@ test("multiple: multiple string flags", () => {
   )
 })
 
-test("multiple: multiple number flags", () => {
-  assert.equal(
+test("multiple: multiple number flags", (t) => {
+  t.deepEqual(
     parse(
       ["--foo", "1", "--foo", "2", "--foo", "3"],
       [{ name: "foo", type: Number, multiple: true }],
@@ -65,8 +70,8 @@ test("multiple: multiple number flags", () => {
   )
 })
 
-test("multiple: multiple positional args", () => {
-  assert.equal(
+test("multiple: multiple positional args", (t) => {
+  t.deepEqual(
     parse(
       ["1", "2", "3", "-f"],
       [
@@ -77,7 +82,7 @@ test("multiple: multiple positional args", () => {
     { foo: ["1", "2", "3"], f: true, _: [] },
   )
 
-  assert.equal(
+  t.deepEqual(
     parse(
       ["1", "2", "3", "-f"],
       [
@@ -93,8 +98,8 @@ test("multiple: multiple positional args", () => {
   )
 })
 
-test("multiple: multiple positional args should stop when a flag appears", () => {
-  assert.equal(
+test("multiple: multiple positional args should stop when a flag appears", (t) => {
+  t.deepEqual(
     parse(
       ["1", "2", "--bar", "3"],
       [
@@ -106,22 +111,25 @@ test("multiple: multiple positional args should stop when a flag appears", () =>
   )
 })
 
-test("when: add flag when the command is build", () => {
-  assert.throws(() => {
-    parse(
-      ["not-build", "--foo"],
-      [
-        { name: "command", type: String, positional: true },
-        {
-          name: "foo",
-          type: Boolean,
-          when: (parsed) => parsed.command === "build",
-        },
-      ],
-    )
-  }, /unknown flag: --foo/)
+test("when: add flag when the command is build", (t) => {
+  t.throws(
+    () => {
+      parse(
+        ["not-build", "--foo"],
+        [
+          { name: "command", type: String, positional: true },
+          {
+            name: "foo",
+            type: Boolean,
+            when: (parsed) => parsed.command === "build",
+          },
+        ],
+      )
+    },
+    { message: /unknown flag: --foo/ },
+  )
 
-  assert.not.throws(() => {
+  t.notThrows(() => {
     parse(
       ["build", "--foo"],
       [
@@ -136,23 +144,26 @@ test("when: add flag when the command is build", () => {
   })
 })
 
-test("when: only accept script args when command is run", () => {
-  assert.throws(() => {
-    parse(
-      ["test", "build"],
-      [
-        { name: "command", type: String, positional: true },
-        {
-          name: "script",
-          type: String,
-          positional: true,
-          when: (parsed) => parsed.command === "run",
-        },
-      ],
-    )
-  }, /unknown positional argument: build/)
+test("when: only accept script args when command is run", (t) => {
+  t.throws(
+    () => {
+      parse(
+        ["test", "build"],
+        [
+          { name: "command", type: String, positional: true },
+          {
+            name: "script",
+            type: String,
+            positional: true,
+            when: (parsed) => parsed.command === "run",
+          },
+        ],
+      )
+    },
+    { message: /unknown positional argument: build/ },
+  )
 
-  assert.equal(
+  t.deepEqual(
     parse(
       ["run", "build"],
       [
@@ -169,14 +180,17 @@ test("when: only accept script args when command is run", () => {
   )
 })
 
-test("option value: required by default", () => {
-  assert.throws(() => {
-    parse(["--foo"], [{ name: "foo", type: String }])
-  }, /missing value for --foo/)
+test("option value: required by default", (t) => {
+  t.throws(
+    () => {
+      parse(["--foo"], [{ name: "foo", type: String }])
+    },
+    { message: /missing value for --foo/ },
+  )
 })
 
-test("option value: optional", () => {
-  assert.equal(
+test("option value: optional", (t) => {
+  t.deepEqual(
     parse(["--foo"], [{ name: "foo", type: String, optionalValue: true }]),
     {
       foo: true,
@@ -185,14 +199,17 @@ test("option value: optional", () => {
   )
 })
 
-test("positional arg: required by default", () => {
-  assert.throws(() => {
-    parse([], [{ name: "command", type: String, positional: true }])
-  }, /missing positional argument: command/)
+test("positional arg: required by default", (t) => {
+  t.throws(
+    () => {
+      parse([], [{ name: "command", type: String, positional: true }])
+    },
+    { message: /missing positional argument: command/ },
+  )
 })
 
-test("positional arg: optional", () => {
-  assert.equal(
+test("positional arg: optional", (t) => {
+  t.deepEqual(
     parse(
       [],
       [
@@ -210,22 +227,22 @@ test("positional arg: optional", () => {
   )
 })
 
-test("stop: use with flag", () => {
-  assert.equal(
+test("stop: use with flag", (t) => {
+  t.deepEqual(
     parse(["--foo", "--bar"], [{ name: "foo", type: Boolean, stop: true }]),
     { foo: true, _: ["--bar"] },
   )
 })
 
-test("using = as separator", () => {
-  assert.equal(parse(["--foo=bar"], [{ name: "foo", type: String }]), {
+test("using = as separator", (t) => {
+  t.deepEqual(parse(["--foo=bar"], [{ name: "foo", type: String }]), {
     foo: "bar",
     _: [],
   })
 })
 
-test("combines short flags", () => {
-  assert.equal(
+test("combines short flags", (t) => {
+  t.deepEqual(
     parse(
       ["-abC", "1"],
       [
@@ -243,4 +260,20 @@ test("combines short flags", () => {
   )
 })
 
-test.run()
+test(`don't check skipped positional arguments`, (t) => {
+  t.deepEqual(
+    parse(
+      ["hey"],
+      [
+        { name: "command", positional: true, type: String },
+        {
+          name: "script",
+          positional: true,
+          type: String,
+          when: (cli) => cli.command === "run",
+        },
+      ],
+    ),
+    { command: "hey", _: [] },
+  )
+})

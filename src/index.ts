@@ -158,6 +158,9 @@ export const parse = (args: string[], options: Option[]) => {
   const parsed: Parsed = { _: [] }
   let stopped = false
 
+  // when `option.when` returns false, they will be skipped
+  const skippedPositionalArgs: Set<String> = new Set()
+
   args = args.reduce<string[]>((res, arg) => {
     if (arg[0] === "-") {
       let equalSignIndex = arg.indexOf("=")
@@ -182,7 +185,6 @@ export const parse = (args: string[], options: Option[]) => {
       parsed._.push(flag)
       continue
     }
-
     if (flag.startsWith("-")) {
       const opt = options.find(
         (o) =>
@@ -202,12 +204,13 @@ export const parse = (args: string[], options: Option[]) => {
         throw new Error(`unknown flag: ${flag}`)
       }
     } else {
-      const opt = options.find(
-        (o) =>
+      const opt = options.find((o) => {
+        return (
           o.positional &&
           parsed[o.name] === undefined &&
-          (!o.when || o.when(parsed)),
-      )
+          (!o.when || o.when(parsed) || !skippedPositionalArgs.add(o.name))
+        )
+      })
       if (opt) {
         i = parsePositional(parsed, args, i, opt)
         if (opt.stop) {
@@ -219,13 +222,17 @@ export const parse = (args: string[], options: Option[]) => {
     }
   }
 
-  // check require positional arguments
+  // check required positional arguments
   for (const opt of options) {
     if (
       opt.positional &&
       !opt.optionalValue &&
-      parsed[opt.name] === undefined
+      parsed[opt.name] === undefined &&
+      !skippedPositionalArgs.has(opt.name)
     ) {
+      if (opt.when && !opt.when(parsed)) {
+        continue
+      }
       throw new Error(`missing positional argument: ${opt.name}`)
     }
   }
