@@ -1,6 +1,6 @@
 {
   "name": "tinyargs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tiny and flexible command-line argument parser for Node.js and Deno.",
   "publishConfig": {
     "access": "public"
