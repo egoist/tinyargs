@@ -70,6 +70,8 @@ $ node cli.js
 error: missing positional argument: files
 ```
 
+If `-h, --help` or `-v, --version` appears, the remaining arguments are not parsed, since we added `stop: true` to the option.
+
 By default all options and positional arguments are required to have a value, if you add a string option named `foo` but it's used like `--foo --bar`, it will throw an error. This can be customized by setting `optionalValue: true`, which in this case would give `foo` a default value of `true` instead.
 
 ### Sub Commands
