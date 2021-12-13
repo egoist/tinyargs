@@ -25,7 +25,7 @@ npm i tinyargs
 [Deno](https://deno.land) users:
 
 ```ts
-import { parse } from "https://unpkg.com/tinyargs/mod.ts"
+import { parse } from "https://deno.land/x/tinyargs/mod.ts"
 ```
 
 ## Examples
