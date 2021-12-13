@@ -6,9 +6,7 @@
     "access": "public"
   },
   "files": [
-    "dist",
-    "/src",
-    "/mod.ts"
+    "dist"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
