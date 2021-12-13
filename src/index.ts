@@ -7,7 +7,8 @@ export type Option = {
   name: string
   /**
    * By default we only capture flags that match the option `name`
-   * But you can use `alias` to capture flags that match any of the aliases
+   * But you can use `flags` to capture flags that match any of the specified values
+   *
    */
   flags?: string[]
   /**
