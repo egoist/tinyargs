@@ -21,7 +21,7 @@
     "build-fast": "tsup src/index.ts --format cjs,esm --target node14",
     "build": "pnpm run build-fast -- --dts-resolve",
     "test": "pnpm run build && uvu -r sucrase/register --ignore fixture",
-    "test-cov": "c8 npm run test",
+    "test-cov": "c8 -r lcov npm run test",
     "prepublishOnly": "pnpm run build-fast"
   },
   "license": "MIT",
