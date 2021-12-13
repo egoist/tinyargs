@@ -12,7 +12,7 @@ A tiny and flexible command-line argument parser for Node.js and Deno.
 
 - Support combined short flags, `-abc foo` is expanded to `-a -b -c foo`
 - Support using equal sign to specify argument value, `-c=config.js` is expanded to `-c config.js`
-- Support positional arguments lile `your-cli foo bar`
+- Support positional arguments like `your-cli foo bar`
 - Support collecting trailing arguments
 - Support sub commands
 
@@ -70,16 +70,14 @@ $ node cli.js
 error: missing positional argument: files
 ```
 
-By default all options and positional arguments are required to have a value, if you add an string option named `foo` but it's used like `--foo --bar`, it will throw an error. This is be customized with the `optionalValue: true` option, which in this case would give `foo` a default value of `true` instead.
+By default all options and positional arguments are required to have a value, if you add a string option named `foo` but it's used like `--foo --bar`, it will throw an error. This can be customized by setting `optionalValue: true`, which in this case would give `foo` a default value of `true` instead.
 
 ### Sub Commands
 
-Create a CLI with two sub commands:
+Create a CLI with two sub commands: (<small>_We use `<>` and `[]` to denote cli arguments in the docs, `<>` means it's required, `[]` means it's optional._</small>)
 
-- `run <script> [args...]`: like `yarn run` or `npm run`, run a script and collect remaining arguments so that you can pass them to the script later.
+- `run <script> [args...]`: like `yarn run` or `npm run`, run a script and collect trailing arguments so that you can pass them to the script later.
 - `download <url>`: download from a url.
-
-<small>We use `<>` and `[]` to denote cli arguments, `<>` means it's required, `[]` means it's optional.</small>
 
 ```ts
 const cli = parse(process.argv.slice(2), [
@@ -89,14 +87,7 @@ const cli = parse(process.argv.slice(2), [
     type: String,
     positional: true,
     when: (cli) => cli.command === "run",
-  },
-  {
-    name: "args",
-    type: String,
-    positional: true,
-    multiple: "include-flags",
-    optionalValue: true,
-    when: (cli) => cli.command === "run",
+    stop: true,
   },
   {
     name: "url",
@@ -107,7 +98,7 @@ const cli = parse(process.argv.slice(2), [
 ])
 
 if (cli.command === "run") {
-  console.log(`...running ${cli.script} with ${cli.args}`)
+  console.log(`...running ${cli.script} with forwarded arguments ${cli._}`)
 } else if (cli.command === "download") {
   console.log(`...downloading ${cli.url}`)
 } else {
@@ -169,7 +160,7 @@ console.log(cli)
 // { foo: true, _: [ 'bar', 'baz', '--some-flag' ] }
 ```
 
-The second way is to use the `multiple: 'include-flags'` option, which will collect all arguments after the option into the specific option:
+The second way is to use `positional: true` with `multiple: 'include-flags'`, which will collect trailing arguments into the specific option:
 
 ```ts
 const cli = parse(
@@ -188,8 +179,6 @@ const cli = parse(
 console.log(cli)
 // { foo: true, args: [ 'bar', 'baz', '--some-flag' ] }
 ```
-
-Setting `multiple` to `true` instead of `include-flags` will make it collect non-flag arguments (i.e. not starting with a dash `-`) only, flag arguments will continue to be parsed as usual.
 
 ## API Reference
 
