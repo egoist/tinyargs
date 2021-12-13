@@ -4,7 +4,7 @@
 
 # tinyargs
 
-[![npm version](https://badgen.net/npm/v/tinyargs)](https://npm.im/tinyargs) [![npm downloads](https://badgen.net/npm/dm/tinyargs)](https://npm.im/tinyargs)
+[![npm version](https://badgen.net/npm/v/tinyargs)](https://npm.im/tinyargs) [![npm downloads](https://badgen.net/npm/dm/tinyargs)](https://npm.im/tinyargs) [![Coverage Status](https://coveralls.io/repos/github/egoist/tinyargs/badge.svg?branch=main)](https://coveralls.io/github/egoist/tinyargs?branch=main)
 
 A tiny and flexible command-line argument parser for Node.js and Deno.
 
