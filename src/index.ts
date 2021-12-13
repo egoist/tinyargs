@@ -136,6 +136,17 @@ const parsePositional = (
   return currentIndex
 }
 
+// -abc 1 => -a -b -c 1
+const splitShortFlags = (arg: string) => {
+  if (/^-[a-zA-Z]/.test(arg)) {
+    return arg
+      .slice(1)
+      .split("")
+      .map((flag) => `-${flag}`)
+  }
+  return [arg]
+}
+
 /**
  * Parse command line arguments with give option config
  *
@@ -145,6 +156,23 @@ const parsePositional = (
 export const parse = (args: string[], options: Option[]) => {
   const parsed: Parsed = { _: [] }
   let stopped = false
+
+  args = args.reduce<string[]>((res, arg) => {
+    if (arg[0] === "-") {
+      let equalSignIndex = arg.indexOf("=")
+      if (equalSignIndex > 0) {
+        res.push(
+          ...splitShortFlags(arg.slice(0, equalSignIndex)),
+          arg.slice(equalSignIndex + 1),
+        )
+      } else {
+        res.push(...splitShortFlags(arg))
+      }
+    } else {
+      res.push(arg)
+    }
+    return res
+  }, [])
 
   for (let i = 0; i < args.length; i++) {
     const flag = args[i]

@@ -217,4 +217,30 @@ test("stop: use with flag", () => {
   )
 })
 
+test("using = as separator", () => {
+  assert.equal(parse(["--foo=bar"], [{ name: "foo", type: String }]), {
+    foo: "bar",
+    _: [],
+  })
+})
+
+test("combines short flags", () => {
+  assert.equal(
+    parse(
+      ["-abC", "1"],
+      [
+        { name: "a", type: Boolean },
+        { name: "b", type: Boolean },
+        { name: "C", type: String },
+      ],
+    ),
+    {
+      a: true,
+      b: true,
+      C: "1",
+      _: [],
+    },
+  )
+})
+
 test.run()

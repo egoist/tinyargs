@@ -8,6 +8,14 @@
 
 A tiny and flexible command-line argument parser for Node.js and Deno.
 
+## Features
+
+- Support combined short flags, `-abc foo` is expanded to `-a -b -c foo`
+- Support using equal sign to specify argument value, `-c=config.js` is expanded to `-c config.js`
+- Support positional arguments lile `your-cli foo bar`
+- Support collecting trailing arguments
+- Support sub commands
+
 ## Install
 
 ```bash
@@ -20,9 +28,9 @@ npm i tinyargs
 import { parse } from "https://unpkg.com/tinyargs/mod.ts"
 ```
 
-## Usage
+## Examples
 
-### CLI example
+### Simple Example
 
 ```ts
 import { parse } from "tinyargs"
@@ -30,7 +38,7 @@ import { parse } from "tinyargs"
 const cli = parse(process.argv.slice(2), [
   { name: "help", flags: ["h"], type: Boolean, stop: true },
   { name: "version", flags: ["v"], type: Boolean, stop: true },
-  { name: "files", type: String, positional, multiple: true },
+  { name: "files", type: String, positional: true, multiple: true },
 ])
 
 if (cli.help) {
@@ -66,10 +74,12 @@ By default all options and positional arguments are required to have a value, if
 
 ### Sub Commands
 
-Create a CLI with two sub command:
+Create a CLI with two sub commands:
 
-- `run script [args...]`: like `yarn run` or `npm run`, run a script and collect remaining arguments so that you can pass them to the script later.
+- `run <script> [args...]`: like `yarn run` or `npm run`, run a script and collect remaining arguments so that you can pass them to the script later.
 - `download <url>`: download from a url.
+
+<small>We use `<>` and `[]` to denote cli arguments, `<>` means it's required, `[]` means it's optional.</small>
 
 ```ts
 const cli = parse(process.argv.slice(2), [
@@ -104,6 +114,82 @@ if (cli.command === "run") {
   console.log(`...unknown command ${cli.command}`)
 }
 ```
+
+## Guide
+
+### Flags
+
+Define a flag that could be used as `your-cli --file <value>`, only `name` and `type` are required:
+
+```ts
+parse(process.argv.slice(2), [{ name: "file", type: String }])
+```
+
+### Positional Arguments
+
+Define a positional argument that could be used as `your-cli <file>`, by setting `positional: true`:
+
+```ts
+parse(process.argv.slice(2), [{ name: "file", type: String, positional: true }])
+```
+
+### Repeated / Multiple Flags and Positional Arguments
+
+Flags can be repeated if you set `multiple: true`:
+
+```ts
+parse(process.argv.slice(2), [{ name: "file", type: String, multiple: true }])
+```
+
+Now your cli can be used as `your-cli --file a.js --file b.js`, the resulting object will look like: `{ file: [ 'a.js', 'b.js' ] }`.
+
+Positional arguments work in a similar fashion:
+
+```ts
+parse(process.argv.slice(2), [
+  { name: "file", type: String, positional: true, multiple: true },
+])
+```
+
+Now you can do `your-cli a.js b.js`, the resulting object will look like: `{ file: [ 'a.js', 'b.js' ] }`.
+
+Note that you can't have two `multiple` `poitional` arguments in the same command, because the first one will collect all positional arguments.
+
+### Collecting Trailing Arguments
+
+There're two way, first is to use the `stop` option, which will stop parsing arguments after the option, and arguments beyond that point will be collected under `_` in the returned object:
+
+```ts
+const cli = parse(
+  ["--foo", "bar", "baz", "--some-flag"],
+  [{ name: "foo", type: Boolean, stop: true }],
+)
+
+console.log(cli)
+// { foo: true, _: [ 'bar', 'baz', '--some-flag' ] }
+```
+
+The second way is to use the `multiple: 'include-flags'` option, which will collect all arguments after the option into the specific option:
+
+```ts
+const cli = parse(
+  ["--foo", "bar", "baz", "--some-flag"],
+  [
+    { name: "foo", type: Boolean },
+    {
+      name: "args",
+      type: String,
+      positional: true,
+      multiple: "include-flags",
+    },
+  ],
+)
+
+console.log(cli)
+// { foo: true, args: [ 'bar', 'baz', '--some-flag' ] }
+```
+
+Setting `multiple` to `true` instead of `include-flags` will make it collect non-flag arguments (i.e. not starting with a dash `-`) only, flag arguments will continue to be parsed as usual.
 
 ## API Reference
 
