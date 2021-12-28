@@ -1,4 +1,4 @@
-export type Option = {
+export interface Option<TMeta> {
   /**
    * The flag or positional argument's name
    *
@@ -68,6 +68,12 @@ export type Option = {
    * Already parsed options will be passed to the function
    */
   when?: (parsed: Parsed) => boolean
+
+  /**
+   * Use this to store information about the option
+   * Useful for building help message
+   */
+  meta?: TMeta
 }
 
 type OptionSimpleType =
@@ -90,7 +96,7 @@ const parseFlag = (
   parsed: Parsed,
   args: string[],
   currentIndex: number,
-  opt: Option,
+  opt: Option<unknown>,
   flag: string,
 ) => {
   if (opt.type === Boolean) {
@@ -114,7 +120,7 @@ const parsePositional = (
   parsed: Parsed,
   args: string[],
   currentIndex: number,
-  opt: Option,
+  opt: Option<unknown>,
 ) => {
   if (!opt.multiple) {
     parsed[opt.name] = opt.type(args[currentIndex])
@@ -154,7 +160,7 @@ const splitShortFlags = (arg: string) => {
  * Not that if you're using `process.argv`, you should always omit the first two elements,
  * i.e. pass `process.argv.slice(2)` to this function
  */
-export const parse = (args: string[], options: Option[]) => {
+export const parse = <TMeta>(args: string[], options: Option<TMeta>[]) => {
   const parsed: Parsed = { _: [] }
   let stopped = false
 
