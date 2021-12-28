@@ -26,8 +26,8 @@
   "license": "MIT",
   "devDependencies": {
     "@egoist/prettier-config": "1.0.0",
-    "ava": "^4.0.0-rc.1",
-    "c8": "^7.10.0",
+    "ava": "4.0.0-rc.1",
+    "c8": "7.10.0",
     "prettier": "2.5.1",
     "sucrase": "3.20.3",
     "tsup": "5.11.9",
