@@ -1,4 +1,4 @@
-## Unreleased
+## 0.1.4
 
 - Allow `meta` property on `option`:
 
