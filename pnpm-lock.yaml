@@ -4,7 +4,7 @@ specifiers:
   '@egoist/prettier-config': 1.0.0
   ava: 4.0.0-rc.1
   c8: 7.11.0
-  prettier: 2.5.1
+  prettier: 2.7.1
   sucrase: 3.20.3
   tsup: 5.11.10
   typescript: 4.5.4
@@ -14,7 +14,7 @@ devDependencies:
   '@egoist/prettier-config': 1.0.0
   ava: 4.0.0-rc.1
   c8: 7.11.0
-  prettier: 2.5.1
+  prettier: 2.7.1
   sucrase: 3.20.3
   tsup: 5.11.10_typescript@4.5.4
   typescript: 4.5.4
@@ -1426,8 +1426,8 @@ packages:
       import-cwd: 3.0.0
     dev: true
 
-  /prettier/2.5.1:
-    resolution: {integrity: sha512-vBZcPRUR5MZJwoyi3ZoyQlc1rXeEck8KgeC9AwwOn+exuxLxq5toTRDTSaVrXHxelDMHy9zlicw8u66yxoSUFg==}
+  /prettier/2.7.1:
+    resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
